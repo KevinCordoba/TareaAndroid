@@ -6,9 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         // Restaurante 1
-        String[] Menu1= {"arroz","frijoles","pollo frito","ensalada"};
+        String[] Menu1= {"arroz con camarones", "arroz con pollo","frijoles","pollo frito","ensalada"};
         ArrayList<String> Array1 = new ArrayList<>(Arrays.asList(Menu1));
         Restaurante Restaurante1 = new Restaurante("Comedor TEC","Lunes a Viernes de 7am a 8pm",Array1,-83.912867,9.8553526);
 
@@ -34,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         Restaurante Restaurante2 = new Restaurante("Soda Deportiva","Lunes a Viernes de 7am a 4pm",Array2,-83.9108464,9.8573249);
 
         // Restaurante 3
-        String[] Menu3 = {"arroz", "queso", "fideos","café"};
+        String[] Menu3 = {"arroz con camarones", "queso", "fideos","café", "hamburguesa"};
         ArrayList<String> Array3 = new ArrayList<>(Arrays.asList(Menu3));
         Restaurante Restaurante3 = new Restaurante("Forestal","Lunes a Viernes de 7am a 4pm",Array3,-83.9103832,9.8495901);
 
@@ -66,12 +69,59 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         SearchView searchView = (SearchView) findViewById(R.id.searchView);
+        TextView textViewResultado = findViewById(R.id.textViewResultado);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // Manejar evento de búsqueda cuando se presiona el botón de búsqueda
+                //TextView textViewResultado = findViewById(R.id.textViewResultado);
+                //Agregar un TextWatcher
+                TextWatcher textWatcher = new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        //Cambiar color de fondo
+                        if (charSequence.length() > 0){
+                            textViewResultado.setBackgroundColor(getResources().getColor(R.color.purple_200));
+                        } else {
+                            textViewResultado.setBackgroundColor(getResources().getColor(R.color.black));
+                        }
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                };
+                textViewResultado.addTextChangedListener(textWatcher);
+                //textViewResultado.setText("Resultado: " + query);
+                //Visible o no
+                if (!textViewResultado.getText().toString().isEmpty()){
+                    textViewResultado.setVisibility(View.VISIBLE);
+                } else{
+                    textViewResultado.setVisibility(View.GONE);
+                }
+
+                //probando lista
+                ArrayList<Restaurante> resultados = Controlador.BuscarPorComida(query);
+
+                for(Restaurante res: resultados){
+                    String textoActual = textViewResultado.getText().toString();
+                    if (!textoActual.contains(res.getNombre())){
+                        String textoNuevo = textoActual + "\n" + res.getNombre();
+                        textViewResultado.setText(textoNuevo);
+                    }
+                    //String textoNuevo = textoActual + res.getNombre();
+                    //textViewResultado.setText(res.getNombre());
+                }
                 return false;
             }
 
@@ -82,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
                 for(Restaurante res: resultados){
                     System.out.println(res.getNombre());
                 }
+                textViewResultado.setVisibility(View.GONE);
+                textViewResultado.setText("");
                 return true;
             }
         });
