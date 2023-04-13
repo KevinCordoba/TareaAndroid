@@ -22,6 +22,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.foodrest_tarea.databinding.ActivityMapsBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.example.foodrest_tarea.model.Restaurante;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -30,7 +33,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE=101;
-
+    private ArrayList<Restaurante> Restaurantes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,21 +87,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap ) {
         //mMap = googleMap;
 
         //prueba
-        LatLng Forestal = new LatLng(9.8495901, -83.9103832);
-        googleMap.addMarker(new MarkerOptions().position(Forestal).title("Soda La Casita Forestal"));
 
-        LatLng RestInst = new LatLng(9.8553526, -83.912867);
-        googleMap.addMarker(new MarkerOptions().position(RestInst).title("Restaurante Institucional"));
-
-        LatLng deportiva = new LatLng(9.8573249, -83.9108464);
-        googleMap.addMarker(new MarkerOptions().position(deportiva).title("Soda La Deportiva"));
-
-        LatLng sodaeste = new LatLng(9.853815, -83.907131);
-        googleMap.addMarker(new MarkerOptions().position(sodaeste).title("Soda Del Este"));
+        for(Restaurante res : Restaurantes){
+            LatLng marcador = new LatLng(res.getLatitude(),res.getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(marcador).title(res.getNombre()));
+        }
 
         LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Ubicacion Actual");
